@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ <div class="box">
+    <div class="btn">>></div>
+    <p class="text">拖动滑块验证</p>
+    <div class="bg"></div>
+  </div>
+
+ <style>
+   * {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+.box {
+  width: 500px;
+  height: 60px;
+  position: relative;
+  left: 50%;
+  margin-left: -250px;
+  margin-top: 50px;
+  background: #eae4e4;
+  display: flex;
+  align-items: center;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+.btn {
+  height: 100%;
+  width: 60px;
+  background: #fbf5f5;
+  box-sizing: border-box;
+  border: 2px solid #cecaca;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  color: #d5d4d4;
+  z-index: 999;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+.btn:hover {
+  cursor:pointer;
+}
+.text {
+  font-size: 20px;
+  position: absolute;
+  left: 50%;
+  margin-left: -60px;
+  background-color: transparent;
+  z-index: 2;
+}
+.bg {
+  height: 100%;
+  position: absolute;
+  background-color: #4cbb42;
+  z-index: 1;
+}
+ </style>
+
+ <script>
+   window.onload = function () {
+  // 封装-选择器,内部可以做兼容性
+  function querySelect(name) {
+    return document.querySelector(name)
+  }
+  // 验证成功
+  // 验证失败
+  // 触发事件 onmousedown按下  onmousemove移动  onmouseup松开
+  let btn = querySelect('.btn') // 滑块  对IE6/7 有兼容性问题
+  let box = querySelect('.box') // box
+  let text = querySelect('.text') // 文字
+  let bg = querySelect('.bg') // 背景
+  btn.onmousedown = (eventDown) => {
+    // event.clientX;clientY   鼠标当前X轴Y轴坐标
+    let downX = eventDown.clientX
+    console.log(downX)
+    document.onmousemove = (eventMove) => {
+      // 移动的X坐标 - 按下的X坐标
+
+      let moveX = eventMove.clientX - downX
+        console.log(eventDown.clientX)
+        console.log(moveX)
+      let boxWidth = box.offsetWidth
+      let btnWidth = btn.offsetWidth
+      if (moveX >= 0 && moveX <= (boxWidth - btnWidth)) { // 可移动的范围
+        btn.style.left = moveX + 'px' // 滑块绝对定位
+        bg.style.width = moveX + 'px' // 设备背景的宽度
+      }
+      if (moveX >= (boxWidth - btnWidth)) {
+        btn.style.left = (boxWidth - btnWidth) + 'px' // 滑块绝对定位
+        bg.style.width = (boxWidth - btnWidth) + 'px' // 设备背景的宽度
+        // 文字提醒
+        text.innerText = '验证成功'
+        text.style.color = '#fff'
+        // 事件清除-按下、移动
+        btn.onmousedown = null
+        document.onmousemove = null
+        btn.onmouseup = null
+      }
+    }
+  }
+  btn.onmouseup = (eventUp) => {
+    // 松开后回到原点
+    // 清除移动事件
+      console.log('鼠标抬起')
+    btn.style.left = 0 + 'px'
+    bg.style.width = 0 + 'px'
+    document.onmousemove = null
+  }
+}
+ </script>
+
+
+</body>
+</html>
